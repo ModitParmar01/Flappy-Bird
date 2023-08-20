@@ -32,7 +32,7 @@ public class FlappyBird implements ActionListener{
         
         ImageIcon icon = null;
         try {
-            icon = new ImageIcon("src\\FlappyBird\\pngegg.png");
+            icon = new ImageIcon("img\\pngegg.png");
         } catch (Exception e){
             e.printStackTrace();
         }
