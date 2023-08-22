@@ -1,6 +1,7 @@
 package FlappyBird;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,8 @@ public class FlappyBird implements ActionListener{
 
     public final int WIDTH=800, HEIGHT=800;
     public int ticks, yMotion;
-
+    public boolean gameOver, started;
+    
     public ArrayList<Rectangle> columns;
 
     Timer timer = new Timer(20,this);
@@ -63,6 +65,7 @@ public class FlappyBird implements ActionListener{
         int speed =10;
         ticks++;
 
+        if(started) {
         for(int i=0; i<columns.size(); i++){
             Rectangle col = columns.get(i);
             col.x -= speed;
@@ -73,9 +76,40 @@ public class FlappyBird implements ActionListener{
         }
         bird.y += yMotion;
 
+        
+        for(int i=0; i<columns.size(); i++) {
+            Rectangle column = columns.get(i);
+            
+            if(column.x+column.width<0) {
+                columns.remove(column);
+                if (column.y == 0){
+                    addCol(false);
+                }
+            }
+            
+        }
+        
+        for (Rectangle colomn : columns) {
+            if(colomn.intersects(bird)) 
+            {
+                gameOver = true;
+
+                bird.x = colomn.x - (bird.width - 10);
+
+            }
+        }
+        if(bird.y>HEIGHT-165 || bird.y<0) {
+            gameOver = true;
+        }
+
+        if(gameOver){
+            bird.y = HEIGHT - 165 - bird.height;
+        }
+
+    }
         renderer.repaint();
     }
-
+    
     public void addCol(boolean start) {
         int spacing = 300;
         int width = 100;
@@ -110,6 +144,17 @@ public class FlappyBird implements ActionListener{
 
         g.setColor(Color.RED);
         g.fillRect(bird.x-10, bird.y-10, bird.width, bird.height);
+
+        g.setColor(Color.white);
+        g.setFont(new Font("Arial", 1, 100));
+
+        if(!gameOver){
+            g.drawString("Click to start!", 100, HEIGHT/3);
+        }
+
+        if (gameOver){
+            g.drawString("BYEBYE!", 200, HEIGHT/2);
+        }
 
         for(Rectangle column: columns) {
             paintColomn(g, column);
